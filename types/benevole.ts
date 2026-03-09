@@ -1,4 +1,4 @@
-import { Role } from "./type";
+import { Role } from "./user";
 
 export interface Benevole {
   id: number;

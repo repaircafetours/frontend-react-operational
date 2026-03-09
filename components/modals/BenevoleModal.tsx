@@ -12,7 +12,8 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { useCreateBenevole } from "@/hooks/useBenevoles";
-import type { BenevoleFormData, Role } from "@/types/type";
+import type { BenevoleFormData } from "@/types/benevole";
+import { Role } from "@/types/user";
 
 // ── Validation schema ─────────────────────────────────────────────────────────
 
