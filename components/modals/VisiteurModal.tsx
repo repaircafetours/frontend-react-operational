@@ -1,84 +1,305 @@
 "use client";
-import { useForm } from "react-hook-form";
+
+import { useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useCreateVisiteur } from "@/hooks/useVisiteurs";
-import type { VisiteurFormData } from "@/types/type";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import { useCreateVisiteur, useUpdateVisiteur } from "@/hooks/useVisiteurs";
+import type { Visiteur } from "@/types/visiteur";
+import {
+    CIVILITES,
+    SOURCES_CONNAISSANCE,
+    type Civilite,
+    type SourceConnaissance,
+} from "@/types/visiteur";
+
+// ── Validation schema ─────────────────────────────────────────────────────────
 
 const schema = z.object({
-  nom: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
-  billet: z.string().min(1, "Le numéro de billet est requis"),
-  evenement: z.string().min(1, "L'événement est requis"),
+    civilite: z.enum(["M.", "Mme", "Mx"] as const),
+    prenom: z.string().min(2, "Le prénom doit contenir au moins 2 caractères"),
+    nom: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
+    email: z.string().email("Adresse e-mail invalide"),
+    telephone: z
+        .string()
+        .min(10, "Le téléphone doit contenir au moins 10 chiffres"),
+    connu: z.enum([
+        "Bouche à oreille",
+        "Réseaux sociaux",
+        "Affiche",
+        "Presse",
+        "Autre",
+    ] as const),
 });
 
 type FormValues = z.infer<typeof schema>;
 
+// ── Props ─────────────────────────────────────────────────────────────────────
+
 interface VisiteurModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+    visiteur?: Visiteur;
 }
 
-export function VisiteurModal({ open, onOpenChange }: VisiteurModalProps) {
-  const { mutate, isPending } = useCreateVisiteur();
+// ── Component ─────────────────────────────────────────────────────────────────
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<FormValues>({ resolver: zodResolver(schema) });
+export function VisiteurModal({
+    open,
+    onOpenChange,
+    visiteur,
+}: VisiteurModalProps) {
+    const isEdit = !!visiteur;
 
-  const onSubmit = (data: FormValues) => {
-    mutate(data as VisiteurFormData, {
-      onSuccess: () => {
-        reset();
-        onOpenChange(false);
-      },
+    const createMutation = useCreateVisiteur();
+    const updateMutation = useUpdateVisiteur();
+    const isPending = createMutation.isPending || updateMutation.isPending;
+
+    const {
+        register,
+        handleSubmit,
+        control,
+        reset,
+        formState: { errors },
+    } = useForm<FormValues>({
+        resolver: zodResolver(schema),
+        defaultValues: {
+            civilite: "M.",
+            prenom: "",
+            nom: "",
+            email: "",
+            telephone: "",
+            connu: "Bouche à oreille",
+        },
     });
-  };
 
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Nouveau visiteur</DialogTitle>
-        </DialogHeader>
+    useEffect(() => {
+        if (open) {
+            reset(
+                visiteur
+                    ? {
+                          civilite: visiteur.civilite,
+                          prenom: visiteur.prenom,
+                          nom: visiteur.nom,
+                          email: visiteur.email,
+                          telephone: visiteur.telephone,
+                          connu: visiteur.connu,
+                      }
+                    : {
+                          civilite: "M.",
+                          prenom: "",
+                          nom: "",
+                          email: "",
+                          telephone: "",
+                          connu: "Bouche à oreille",
+                      },
+            );
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [open, visiteur?.id]);
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-1.5">
-            <Label htmlFor="nom">Nom complet</Label>
-            <Input id="nom" placeholder="Prénom Nom" {...register("nom")} />
-            {errors.nom && <p className="text-xs text-destructive">{errors.nom.message}</p>}
-          </div>
+    const onSubmit = (data: FormValues) => {
+        if (isEdit && visiteur) {
+            updateMutation.mutate(
+                { id: visiteur.id, data },
+                {
+                    onSuccess: () => {
+                        reset();
+                        onOpenChange(false);
+                    },
+                },
+            );
+        } else {
+            createMutation.mutate(data, {
+                onSuccess: () => {
+                    reset();
+                    onOpenChange(false);
+                },
+            });
+        }
+    };
 
-          <div className="space-y-1.5">
-            <Label htmlFor="billet">N° de billet</Label>
-            <Input id="billet" placeholder="VIP-000" {...register("billet")} />
-            {errors.billet && <p className="text-xs text-destructive">{errors.billet.message}</p>}
-          </div>
+    return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent className="sm:max-w-lg">
+                <DialogHeader>
+                    <DialogTitle>
+                        {isEdit ? "Modifier le visiteur" : "Nouveau visiteur"}
+                    </DialogTitle>
+                </DialogHeader>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="evenement">Événement</Label>
-            <Input id="evenement" placeholder="Nom de l'événement" {...register("evenement")} />
-            {errors.evenement && <p className="text-xs text-destructive">{errors.evenement.message}</p>}
-          </div>
+                <form
+                    onSubmit={handleSubmit(onSubmit)}
+                    className="space-y-4 py-2"
+                >
+                    {/* Civilité */}
+                    <div className="space-y-1.5">
+                        <Label>Civilité</Label>
+                        <Controller
+                            name="civilite"
+                            control={control}
+                            render={({ field }) => (
+                                <Select
+                                    value={field.value}
+                                    onValueChange={(v) =>
+                                        field.onChange(v as Civilite)
+                                    }
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Sélectionner une civilité" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {CIVILITES.map((c) => (
+                                            <SelectItem key={c} value={c}>
+                                                {c}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            )}
+                        />
+                        {errors.civilite && (
+                            <p className="text-xs text-destructive">
+                                {errors.civilite.message}
+                            </p>
+                        )}
+                    </div>
 
-          <DialogFooter className="pt-2">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Annuler
-            </Button>
-            <Button type="submit" disabled={isPending}>
-              {isPending ? "Création…" : "Créer"}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
-  );
+                    {/* Prénom + Nom (grid 2) */}
+                    <div className="grid grid-cols-2 gap-3">
+                        <div className="space-y-1.5">
+                            <Label htmlFor="prenom">Prénom</Label>
+                            <Input
+                                id="prenom"
+                                placeholder="Marie"
+                                {...register("prenom")}
+                            />
+                            {errors.prenom && (
+                                <p className="text-xs text-destructive">
+                                    {errors.prenom.message}
+                                </p>
+                            )}
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <Label htmlFor="nom">Nom</Label>
+                            <Input
+                                id="nom"
+                                placeholder="Dupont"
+                                {...register("nom")}
+                            />
+                            {errors.nom && (
+                                <p className="text-xs text-destructive">
+                                    {errors.nom.message}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Email */}
+                    <div className="space-y-1.5">
+                        <Label htmlFor="email">Email</Label>
+                        <Input
+                            id="email"
+                            type="email"
+                            placeholder="marie.dupont@exemple.fr"
+                            {...register("email")}
+                        />
+                        {errors.email && (
+                            <p className="text-xs text-destructive">
+                                {errors.email.message}
+                            </p>
+                        )}
+                    </div>
+
+                    {/* Téléphone */}
+                    <div className="space-y-1.5">
+                        <Label htmlFor="telephone">Téléphone</Label>
+                        <Input
+                            id="telephone"
+                            type="tel"
+                            placeholder="06 12 34 56 78"
+                            {...register("telephone")}
+                        />
+                        {errors.telephone && (
+                            <p className="text-xs text-destructive">
+                                {errors.telephone.message}
+                            </p>
+                        )}
+                    </div>
+
+                    {/* Source de connaissance */}
+                    <div className="space-y-1.5">
+                        <Label>
+                            Comment a-t-il/elle connu l&apos;association ?
+                        </Label>
+                        <Controller
+                            name="connu"
+                            control={control}
+                            render={({ field }) => (
+                                <Select
+                                    value={field.value}
+                                    onValueChange={(v) =>
+                                        field.onChange(v as SourceConnaissance)
+                                    }
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Sélectionner une source" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {SOURCES_CONNAISSANCE.map((s) => (
+                                            <SelectItem key={s} value={s}>
+                                                {s}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            )}
+                        />
+                        {errors.connu && (
+                            <p className="text-xs text-destructive">
+                                {errors.connu.message}
+                            </p>
+                        )}
+                    </div>
+
+                    <DialogFooter className="pt-2">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => onOpenChange(false)}
+                        >
+                            Annuler
+                        </Button>
+                        <Button type="submit" disabled={isPending}>
+                            {isPending
+                                ? isEdit
+                                    ? "Enregistrement…"
+                                    : "Création…"
+                                : isEdit
+                                  ? "Enregistrer"
+                                  : "Créer"}
+                        </Button>
+                    </DialogFooter>
+                </form>
+            </DialogContent>
+        </Dialog>
+    );
 }
