@@ -1,8 +1,9 @@
-export type Role = "benevole" | "admin";
+export type Role = "admin" | "benevole" | "benevole_intendant";
 
 export interface UserSession {
-  id: number;
-  nom: string;
-  email: string;
-  role: Role;
+    id: number;
+    nom: string;
+    prenom: string;
+    email: string;
+    role: Role;
 }
