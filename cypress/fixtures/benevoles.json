@@ -1,0 +1,90 @@
+[
+  {
+    "id": 1,
+    "nom": "Martin",
+    "prenom": "Sophie",
+    "role": "admin",
+    "categorie": "operationnel",
+    "secteurs": [],
+    "regimeAlimentaire": "Végétarien",
+    "actif": true,
+    "createdAt": "2024-01-10T08:00:00Z"
+  },
+  {
+    "id": 2,
+    "nom": "Dupont",
+    "prenom": "Luc",
+    "role": "benevole",
+    "categorie": "reparateur",
+    "secteurs": ["Électronique", "Informatique"],
+    "regimeAlimentaire": "Omnivore",
+    "actif": true,
+    "createdAt": "2024-01-12T09:00:00Z"
+  },
+  {
+    "id": 3,
+    "nom": "Ndiaye",
+    "prenom": "Aria",
+    "role": "benevole",
+    "categorie": "reparateur",
+    "secteurs": ["Électroménager", "Mobilier"],
+    "regimeAlimentaire": "Halal",
+    "actif": true,
+    "createdAt": "2024-01-15T10:00:00Z"
+  },
+  {
+    "id": 4,
+    "nom": "Bernard",
+    "prenom": "Paul",
+    "role": "benevole",
+    "categorie": "reparateur",
+    "secteurs": ["Vêtements & Textile", "Bijoux & Accessoires"],
+    "regimeAlimentaire": "Omnivore",
+    "actif": true,
+    "createdAt": "2024-02-01T08:30:00Z"
+  },
+  {
+    "id": 5,
+    "nom": "Leroy",
+    "prenom": "Camille",
+    "role": "benevole_intendant",
+    "categorie": "intendant",
+    "secteurs": [],
+    "regimeAlimentaire": "Végétalien",
+    "actif": true,
+    "createdAt": "2024-02-03T09:00:00Z"
+  },
+  {
+    "id": 6,
+    "nom": "Fontaine",
+    "prenom": "Marc",
+    "role": "benevole",
+    "categorie": "operationnel",
+    "secteurs": [],
+    "regimeAlimentaire": "Sans gluten",
+    "actif": true,
+    "createdAt": "2024-02-10T11:00:00Z"
+  },
+  {
+    "id": 7,
+    "nom": "Petit",
+    "prenom": "Julie",
+    "role": "benevole",
+    "categorie": "reparateur",
+    "secteurs": ["Informatique", "Électronique"],
+    "regimeAlimentaire": "Omnivore",
+    "actif": false,
+    "createdAt": "2024-02-15T14:00:00Z"
+  },
+  {
+    "id": 8,
+    "nom": "Moreau",
+    "prenom": "Thomas",
+    "role": "benevole",
+    "categorie": "intendant",
+    "secteurs": [],
+    "regimeAlimentaire": "Casher",
+    "actif": true,
+    "createdAt": "2024-03-01T08:00:00Z"
+  }
+]

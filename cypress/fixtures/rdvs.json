@@ -1,0 +1,51 @@
+[
+  {
+    "id": 1,
+    "visiteurId": 1,
+    "objetId": 1,
+    "evenementId": 1,
+    "createdAt": "2024-03-10T10:00:00Z"
+  },
+  {
+    "id": 2,
+    "visiteurId": 2,
+    "objetId": 2,
+    "evenementId": 1,
+    "createdAt": "2024-03-10T11:00:00Z"
+  },
+  {
+    "id": 3,
+    "visiteurId": 3,
+    "objetId": 3,
+    "evenementId": 1,
+    "createdAt": "2024-03-11T08:00:00Z"
+  },
+  {
+    "id": 4,
+    "visiteurId": 4,
+    "objetId": 4,
+    "evenementId": 2,
+    "createdAt": "2024-04-10T09:00:00Z"
+  },
+  {
+    "id": 5,
+    "visiteurId": 4,
+    "objetId": 5,
+    "evenementId": 2,
+    "createdAt": "2024-04-10T09:00:00Z"
+  },
+  {
+    "id": 6,
+    "visiteurId": 5,
+    "objetId": 6,
+    "evenementId": 2,
+    "createdAt": "2024-04-12T14:00:00Z"
+  },
+  {
+    "id": 7,
+    "visiteurId": 6,
+    "objetId": 7,
+    "evenementId": 3,
+    "createdAt": "2024-05-05T10:00:00Z"
+  }
+]

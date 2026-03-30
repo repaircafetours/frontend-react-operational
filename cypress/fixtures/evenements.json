@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "nom": "Repair Café Printemps",
+    "ville": "Dijon",
+    "lieu": "Maison de quartier des Grésilles",
+    "date": "2024-03-15T09:00:00Z",
+    "adresse": "12 rue des Roses, 21000 Dijon",
+    "createdAt": "2024-01-20T10:00:00Z"
+  },
+  {
+    "id": 2,
+    "nom": "Repair Café Été",
+    "ville": "Dijon",
+    "lieu": "Centre culturel La Vapeur",
+    "date": "2024-04-20T09:00:00Z",
+    "adresse": "42 avenue de Stalingrad, 21000 Dijon",
+    "createdAt": "2024-02-15T10:00:00Z"
+  },
+  {
+    "id": 3,
+    "nom": "Repair Café Automne",
+    "ville": "Beaune",
+    "lieu": "Salle polyvalente du centre-ville",
+    "date": "2024-05-18T09:00:00Z",
+    "adresse": "8 place Carnot, 21200 Beaune",
+    "createdAt": "2024-03-10T10:00:00Z"
+  },
+  {
+    "id": 4,
+    "nom": "Repair Café Hiver",
+    "ville": "Dijon",
+    "lieu": "Bibliothèque Universitaire",
+    "date": "2025-09-20T09:00:00Z",
+    "adresse": "3 esplanade Erasme, 21000 Dijon",
+    "createdAt": "2024-06-01T10:00:00Z"
+  }
+]

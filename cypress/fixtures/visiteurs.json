@@ -1,0 +1,191 @@
+[
+  {
+    "id": 1,
+    "prenom": "Jean",
+    "nom": "Lefebvre",
+    "civilite": "M.",
+    "email": "jean.lefebvre@mail.fr",
+    "telephone": "06 12 34 56 78",
+    "connu": "Bouche à oreille",
+    "createdAt": "2024-03-15T08:00:00Z",
+    "objets": [
+      {
+        "id": 1,
+        "visiteurId": 1,
+        "nom": "Grille-pain",
+        "marque": "Tefal",
+        "description": "Ne chauffe plus, résistance probablement hors service",
+        "faitDisjoncter": false,
+        "poids": 1.2,
+        "note": "Acheté il y a 5 ans, utilisé quotidiennement",
+        "demonte": false,
+        "risqueElectrique": true,
+        "statut": "repare",
+        "benevoleId": 3,
+        "avisBenevole": "Résistance remplacée, fonctionne de nouveau",
+        "pieceACommander": "",
+        "createdAt": "2024-03-15T09:00:00Z"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "prenom": "Fatima",
+    "nom": "Ouidir",
+    "civilite": "Mme",
+    "email": "fatima.ouidir@mail.fr",
+    "telephone": "07 98 76 54 32",
+    "connu": "Réseaux sociaux",
+    "createdAt": "2024-03-15T09:30:00Z",
+    "objets": [
+      {
+        "id": 2,
+        "visiteurId": 2,
+        "nom": "Veste en laine",
+        "marque": "Sans marque",
+        "description": "Fermeture éclair cassée, couture défaite sur le côté gauche",
+        "faitDisjoncter": false,
+        "note": "Veste vintage avec valeur sentimentale",
+        "demonte": false,
+        "risqueElectrique": false,
+        "statut": "en_cours",
+        "benevoleId": 4,
+        "avisBenevole": "Fermeture éclair remplacée, couture en cours",
+        "pieceACommander": "Fermeture éclair 40cm noire",
+        "createdAt": "2024-03-15T10:00:00Z"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "prenom": "Marco",
+    "nom": "Rossi",
+    "civilite": "M.",
+    "email": "marco.rossi@mail.it",
+    "telephone": "06 55 44 33 22",
+    "connu": "Affiche",
+    "createdAt": "2024-03-15T10:00:00Z",
+    "objets": [
+      {
+        "id": 3,
+        "visiteurId": 3,
+        "nom": "Lampe de bureau",
+        "marque": "IKEA",
+        "description": "Interrupteur défaillant, scintille avant de s'éteindre",
+        "faitDisjoncter": true,
+        "poids": 0.8,
+        "note": "Attention – déclenche le disjoncteur",
+        "demonte": false,
+        "risqueElectrique": true,
+        "statut": "irreparable",
+        "benevoleId": 2,
+        "avisBenevole": "Court-circuit interne non réparable sans pièces d'origine",
+        "pieceACommander": "",
+        "createdAt": "2024-03-15T11:00:00Z"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "prenom": "Claire",
+    "nom": "Dubois",
+    "civilite": "Mme",
+    "email": "claire.dubois@mail.fr",
+    "telephone": "06 11 22 33 44",
+    "connu": "Presse",
+    "createdAt": "2024-04-20T08:00:00Z",
+    "objets": [
+      {
+        "id": 4,
+        "visiteurId": 4,
+        "nom": "Radio portable",
+        "marque": "Sony",
+        "description": "Son grésillant sur le canal FM, antenne cassée",
+        "faitDisjoncter": false,
+        "poids": 0.5,
+        "note": "Modèle ICF-38, antenne télescopique brisée",
+        "demonte": true,
+        "risqueElectrique": false,
+        "statut": "a_rappeler",
+        "benevoleId": 2,
+        "avisBenevole": "Antenne commandée, à rappeler quand reçue",
+        "pieceACommander": "Antenne télescopique Sony ICF-38",
+        "createdAt": "2024-04-20T09:00:00Z"
+      },
+      {
+        "id": 5,
+        "visiteurId": 4,
+        "nom": "Bracelet argent",
+        "marque": "Artisan",
+        "description": "Fermoir cassé, chaîne légèrement déformée",
+        "faitDisjoncter": false,
+        "note": "Bijou de famille, à traiter avec soin",
+        "demonte": false,
+        "risqueElectrique": false,
+        "statut": "repare",
+        "benevoleId": 4,
+        "avisBenevole": "Fermoir soudé, chaîne redressée",
+        "pieceACommander": "",
+        "createdAt": "2024-04-20T09:30:00Z"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "prenom": "Antoine",
+    "nom": "Garnier",
+    "civilite": "M.",
+    "email": "antoine.garnier@mail.fr",
+    "telephone": "07 66 55 44 33",
+    "connu": "Bouche à oreille",
+    "createdAt": "2024-04-20T10:00:00Z",
+    "objets": [
+      {
+        "id": 6,
+        "visiteurId": 5,
+        "nom": "Aspirateur",
+        "marque": "Dyson",
+        "description": "Perte d'aspiration, filtre peut-être encrassé",
+        "faitDisjoncter": false,
+        "poids": 3.5,
+        "note": "Dyson V7, batterie semble encore bonne",
+        "demonte": false,
+        "risqueElectrique": false,
+        "statut": "en_attente",
+        "benevoleId": null,
+        "avisBenevole": "",
+        "pieceACommander": "",
+        "createdAt": "2024-04-20T10:30:00Z"
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "prenom": "Nadia",
+    "nom": "Benali",
+    "civilite": "Mme",
+    "email": "nadia.benali@mail.fr",
+    "telephone": "06 77 88 99 00",
+    "connu": "Réseaux sociaux",
+    "createdAt": "2024-05-18T08:30:00Z",
+    "objets": [
+      {
+        "id": 7,
+        "visiteurId": 6,
+        "nom": "Cafetière",
+        "marque": "De'Longhi",
+        "description": "Fuite d'eau sous la machine, joint probablement usé",
+        "faitDisjoncter": false,
+        "poids": 2.1,
+        "note": "Modèle EC 155, achetée en 2019",
+        "demonte": false,
+        "risqueElectrique": true,
+        "statut": "en_attente",
+        "benevoleId": null,
+        "avisBenevole": "",
+        "pieceACommander": "",
+        "createdAt": "2024-05-18T09:00:00Z"
+      }
+    ]
+  }
+]
