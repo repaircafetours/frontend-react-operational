@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Benevole, BenevoleFormData } from "@/types/benevole";
+import { apiUrl } from "@/lib/config";
 
 // ── Query keys ────────────────────────────────────────────────────────────────
 
@@ -12,19 +13,19 @@ export const benevoleKeys = {
 // ── Fetchers ──────────────────────────────────────────────────────────────────
 
 async function fetchBenevoles(): Promise<Benevole[]> {
-    const res = await fetch("/api/benevoles");
+    const res = await fetch(apiUrl("/benevoles"));
     if (!res.ok) throw new Error("Erreur lors du chargement des bénévoles");
     return res.json();
 }
 
 async function fetchBenevole(id: number): Promise<Benevole> {
-    const res = await fetch(`/api/benevoles/${id}`);
+    const res = await fetch(apiUrl(`/benevoles/${id}`));
     if (!res.ok) throw new Error("Bénévole introuvable");
     return res.json();
 }
 
 async function createBenevole(data: BenevoleFormData): Promise<Benevole> {
-    const res = await fetch("/api/benevoles", {
+    const res = await fetch(apiUrl("/benevoles"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -40,7 +41,7 @@ async function updateBenevole({
     id: number;
     data: Partial<BenevoleFormData>;
 }): Promise<Benevole> {
-    const res = await fetch(`/api/benevoles/${id}`, {
+    const res = await fetch(apiUrl(`/benevoles/${id}`), {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -50,7 +51,7 @@ async function updateBenevole({
 }
 
 async function deleteBenevole(id: number): Promise<void> {
-    const res = await fetch(`/api/benevoles/${id}`, { method: "DELETE" });
+    const res = await fetch(apiUrl(`/benevoles/${id}`), { method: "DELETE" });
     if (!res.ok) throw new Error("Erreur lors de la suppression du bénévole");
 }
 

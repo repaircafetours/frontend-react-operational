@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Rdv, RdvFormData } from "@/types/rdv";
+import { apiUrl } from "@/lib/config";
 
 // ── Query keys ────────────────────────────────────────────────────────────────
 
@@ -22,13 +23,13 @@ async function fetchRdvs(filters?: {
         params.set("visiteurId", String(filters.visiteurId));
 
     const query = params.toString();
-    const res = await fetch(`/api/rdvs${query ? `?${query}` : ""}`);
+    const res = await fetch(apiUrl(`/rdvs${query ? `?${query}` : ""}`));
     if (!res.ok) throw new Error("Erreur lors du chargement des rendez-vous");
     return res.json();
 }
 
 async function createRdv(data: RdvFormData): Promise<Rdv> {
-    const res = await fetch("/api/rdvs", {
+    const res = await fetch(apiUrl("/rdvs"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -38,8 +39,9 @@ async function createRdv(data: RdvFormData): Promise<Rdv> {
 }
 
 async function deleteRdv(id: number): Promise<void> {
-    const res = await fetch(`/api/rdvs/${id}`, { method: "DELETE" });
-    if (!res.ok) throw new Error("Erreur lors de la suppression du rendez-vous");
+    const res = await fetch(apiUrl(`/rdvs/${id}`), { method: "DELETE" });
+    if (!res.ok)
+        throw new Error("Erreur lors de la suppression du rendez-vous");
 }
 
 // ── Hooks ─────────────────────────────────────────────────────────────────────
@@ -58,8 +60,7 @@ export function useCreateRdv() {
     const qc = useQueryClient();
     return useMutation<Rdv, Error, RdvFormData>({
         mutationFn: createRdv,
-        onSuccess: () =>
-            qc.invalidateQueries({ queryKey: rdvKeys.all }),
+        onSuccess: () => qc.invalidateQueries({ queryKey: rdvKeys.all }),
     });
 }
 
@@ -67,7 +68,6 @@ export function useDeleteRdv() {
     const qc = useQueryClient();
     return useMutation<void, Error, number>({
         mutationFn: deleteRdv,
-        onSuccess: () =>
-            qc.invalidateQueries({ queryKey: rdvKeys.all }),
+        onSuccess: () => qc.invalidateQueries({ queryKey: rdvKeys.all }),
     });
 }

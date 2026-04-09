@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { apiUrl } from "@/lib/config";
 import type {
     Visiteur,
     VisiteurFormData,
@@ -21,19 +22,19 @@ export const visiteurKeys = {
 // ── Fetchers ──────────────────────────────────────────────────────────────────
 
 async function fetchVisiteurs(): Promise<Visiteur[]> {
-    const res = await fetch("/api/visiteurs");
+    const res = await fetch(apiUrl("/visiteurs"));
     if (!res.ok) throw new Error("Erreur lors du chargement des visiteurs");
     return res.json();
 }
 
 async function fetchVisiteur(id: number): Promise<Visiteur> {
-    const res = await fetch(`/api/visiteurs/${id}`);
+    const res = await fetch(apiUrl(`/visiteurs/${id}`));
     if (!res.ok) throw new Error("Visiteur introuvable");
     return res.json();
 }
 
 async function createVisiteur(data: VisiteurFormData): Promise<Visiteur> {
-    const res = await fetch("/api/visiteurs", {
+    const res = await fetch(apiUrl("/visiteurs"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -49,7 +50,7 @@ async function updateVisiteur({
     id: number;
     data: VisiteurUpdateData;
 }): Promise<Visiteur> {
-    const res = await fetch(`/api/visiteurs/${id}`, {
+    const res = await fetch(apiUrl(`/visiteurs/${id}`), {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -59,7 +60,7 @@ async function updateVisiteur({
 }
 
 async function deleteVisiteur(id: number): Promise<void> {
-    const res = await fetch(`/api/visiteurs/${id}`, { method: "DELETE" });
+    const res = await fetch(apiUrl(`/visiteurs/${id}`), { method: "DELETE" });
     if (!res.ok) throw new Error("Erreur lors de la suppression du visiteur");
 }
 
@@ -70,7 +71,7 @@ async function addObjet({
     visiteurId: number;
     data: ObjetFormData;
 }): Promise<ObjetAReparer> {
-    const res = await fetch(`/api/visiteurs/${visiteurId}/objets`, {
+    const res = await fetch(apiUrl(`/visiteurs/${visiteurId}/objets`), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -88,11 +89,14 @@ async function updateObjet({
     objetId: number;
     data: ObjetUpdateData;
 }): Promise<ObjetAReparer> {
-    const res = await fetch(`/api/visiteurs/${visiteurId}/objets/${objetId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-    });
+    const res = await fetch(
+        apiUrl(`/visiteurs/${visiteurId}/objets/${objetId}`),
+        {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        },
+    );
     if (!res.ok) throw new Error("Erreur lors de la mise à jour de l'objet");
     return res.json();
 }
@@ -104,9 +108,12 @@ async function deleteObjet({
     visiteurId: number;
     objetId: number;
 }): Promise<void> {
-    const res = await fetch(`/api/visiteurs/${visiteurId}/objets/${objetId}`, {
-        method: "DELETE",
-    });
+    const res = await fetch(
+        apiUrl(`/visiteurs/${visiteurId}/objets/${objetId}`),
+        {
+            method: "DELETE",
+        },
+    );
     if (!res.ok) throw new Error("Erreur lors de la suppression de l'objet");
 }
 
