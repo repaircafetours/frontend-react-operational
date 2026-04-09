@@ -6,9 +6,10 @@ interface Params {
 }
 
 /** GET /api/rdvs/[id] — récupère un rdv par son id */
-export async function GET(_req: NextRequest, { params }: Params): Promise<NextResponse> {
-  await new Promise((r) => setTimeout(r, 80));
-
+export async function GET(
+  _req: NextRequest,
+  { params }: Params,
+): Promise<NextResponse> {
   const { id } = await params;
   const rdv = db.rdvs.find((r) => r.id === Number(id));
 
@@ -20,7 +21,10 @@ export async function GET(_req: NextRequest, { params }: Params): Promise<NextRe
 }
 
 /** DELETE /api/rdvs/[id] — supprime un rdv */
-export async function DELETE(_req: NextRequest, { params }: Params): Promise<NextResponse> {
+export async function DELETE(
+  _req: NextRequest,
+  { params }: Params,
+): Promise<NextResponse> {
   const { id } = await params;
   const numId = Number(id);
 

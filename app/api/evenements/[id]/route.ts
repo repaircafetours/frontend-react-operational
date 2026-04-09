@@ -7,24 +7,34 @@ interface Params {
 }
 
 /** GET /api/evenements/[id] */
-export async function GET(_req: NextRequest, { params }: Params): Promise<NextResponse> {
-  await new Promise((r) => setTimeout(r, 80));
-
+export async function GET(
+  _req: NextRequest,
+  { params }: Params,
+): Promise<NextResponse> {
   const { id } = await params;
   const evenement = db.evenements.find((e) => e.id === Number(id));
   if (!evenement) {
-    return NextResponse.json({ error: "Événement introuvable" }, { status: 404 });
+    return NextResponse.json(
+      { error: "Événement introuvable" },
+      { status: 404 },
+    );
   }
 
   return NextResponse.json(evenement);
 }
 
 /** PUT /api/evenements/[id] — mise à jour partielle */
-export async function PUT(req: NextRequest, { params }: Params): Promise<NextResponse> {
+export async function PUT(
+  req: NextRequest,
+  { params }: Params,
+): Promise<NextResponse> {
   const { id } = await params;
   const evenement = db.evenements.find((e) => e.id === Number(id));
   if (!evenement) {
-    return NextResponse.json({ error: "Événement introuvable" }, { status: 404 });
+    return NextResponse.json(
+      { error: "Événement introuvable" },
+      { status: 404 },
+    );
   }
 
   const body: EvenementUpdateData = await req.json();
@@ -34,13 +44,19 @@ export async function PUT(req: NextRequest, { params }: Params): Promise<NextRes
 }
 
 /** DELETE /api/evenements/[id] — supprime l'événement et ses rdvs */
-export async function DELETE(_req: NextRequest, { params }: Params): Promise<NextResponse> {
+export async function DELETE(
+  _req: NextRequest,
+  { params }: Params,
+): Promise<NextResponse> {
   const { id } = await params;
   const numId = Number(id);
 
   const idx = db.evenements.findIndex((e) => e.id === numId);
   if (idx === -1) {
-    return NextResponse.json({ error: "Événement introuvable" }, { status: 404 });
+    return NextResponse.json(
+      { error: "Événement introuvable" },
+      { status: 404 },
+    );
   }
 
   // Cascade: supprimer les rdvs liés à cet événement
