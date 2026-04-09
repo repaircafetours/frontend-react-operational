@@ -7,7 +7,6 @@ let nextId = 10;
 
 /** GET /api/evenements — liste tous les événements */
 export async function GET(): Promise<NextResponse> {
-  await new Promise((r) => setTimeout(r, 80));
   return NextResponse.json(db.evenements);
 }
 
@@ -16,7 +15,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const body: EvenementFormData = await req.json();
 
   if (!body.nom || !body.ville || !body.lieu || !body.date || !body.adresse) {
-    return NextResponse.json({ error: "Champs requis manquants" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Champs requis manquants" },
+      { status: 400 },
+    );
   }
 
   const evenement = {
