@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { apiUrl } from "@/lib/config";
 import type {
     Evenement,
     EvenementFormData,
@@ -16,19 +17,19 @@ export const evenementKeys = {
 // ── Fetchers ──────────────────────────────────────────────────────────────────
 
 async function fetchEvenements(): Promise<Evenement[]> {
-    const res = await fetch("/api/evenements");
+    const res = await fetch(apiUrl("/evenements"));
     if (!res.ok) throw new Error("Erreur lors du chargement des événements");
     return res.json();
 }
 
 async function fetchEvenement(id: number): Promise<Evenement> {
-    const res = await fetch(`/api/evenements/${id}`);
+    const res = await fetch(apiUrl(`/evenements/${id}`));
     if (!res.ok) throw new Error("Événement introuvable");
     return res.json();
 }
 
 async function createEvenement(data: EvenementFormData): Promise<Evenement> {
-    const res = await fetch("/api/evenements", {
+    const res = await fetch(apiUrl("/evenements"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -44,7 +45,7 @@ async function updateEvenement({
     id: number;
     data: EvenementUpdateData;
 }): Promise<Evenement> {
-    const res = await fetch(`/api/evenements/${id}`, {
+    const res = await fetch(apiUrl(`/evenements/${id}`), {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -55,7 +56,7 @@ async function updateEvenement({
 }
 
 async function deleteEvenement(id: number): Promise<void> {
-    const res = await fetch(`/api/evenements/${id}`, { method: "DELETE" });
+    const res = await fetch(apiUrl(`/evenements/${id}`), { method: "DELETE" });
     if (!res.ok)
         throw new Error("Erreur lors de la suppression de l'événement");
 }
