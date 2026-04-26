@@ -47,6 +47,8 @@ export interface ObjetAReparer {
     faitDisjoncter: boolean;
     /** Weight in kilograms */
     poids?: number;
+    /** Age of the object in years */
+    age?: number;
     note: string;
     photo?: string;
     /** Whether the object has already been disassembled */
@@ -66,6 +68,8 @@ export interface ObjetFormData {
     description: string;
     faitDisjoncter: boolean;
     poids?: number;
+    /** Age of the object in years */
+    age?: number;
     note: string;
     demonte: boolean;
     risqueElectrique: boolean;

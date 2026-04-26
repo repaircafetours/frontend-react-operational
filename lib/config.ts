@@ -14,7 +14,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const API_BASE_URL: string =
-    process.env.NEXT_PUBLIC_API_URL ?? "/api";
+    process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
 
 /**
  * Builds a full API URL from a resource path.

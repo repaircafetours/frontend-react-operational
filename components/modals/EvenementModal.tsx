@@ -20,9 +20,10 @@ import type { Evenement } from "@/types/evenement";
 // ── Validation schema ─────────────────────────────────────────────────────────
 
 const schema = z.object({
-    nom: z.string().min(3, "Le nom doit contenir au moins 3 caractères"),
     ville: z.string().min(2, "La ville doit contenir au moins 2 caractères"),
-    lieu: z.string().min(2, "Le lieu doit contenir au moins 2 caractères"),
+    zip_code: z
+        .string()
+        .min(4, "Le code postal doit contenir au moins 4 caractères"),
     adresse: z.string().min(5, "L'adresse doit contenir au moins 5 caractères"),
     date: z.string().min(1, "La date est requise"),
 });
@@ -46,10 +47,18 @@ export function EvenementModal({
 }: EvenementModalProps) {
     const isEdit = !!evenement;
 
-    const { mutate: createMutate, isPending: isCreating } =
-        useCreateEvenement();
-    const { mutate: updateMutate, isPending: isUpdating } =
-        useUpdateEvenement();
+    const {
+        mutate: createMutate,
+        isPending: isCreating,
+        error: createError,
+        reset: resetCreateMutation,
+    } = useCreateEvenement();
+    const {
+        mutate: updateMutate,
+        isPending: isUpdating,
+        error: updateError,
+        reset: resetUpdateMutation,
+    } = useUpdateEvenement();
     const isPending = isCreating || isUpdating;
 
     const {
@@ -60,9 +69,8 @@ export function EvenementModal({
     } = useForm<FormValues>({
         resolver: zodResolver(schema),
         defaultValues: {
-            nom: "",
             ville: "",
-            lieu: "",
+            zip_code: "",
             adresse: "",
             date: "",
         },
@@ -70,19 +78,19 @@ export function EvenementModal({
 
     useEffect(() => {
         if (open) {
+            resetCreateMutation();
+            resetUpdateMutation();
             reset(
                 evenement
                     ? {
-                          nom: evenement.nom,
                           ville: evenement.ville,
-                          lieu: evenement.lieu,
+                          zip_code: evenement.zip_code ?? "",
                           adresse: evenement.adresse,
                           date: evenement.date.slice(0, 16),
                       }
                     : {
-                          nom: "",
                           ville: "",
-                          lieu: "",
+                          zip_code: "",
                           adresse: "",
                           date: "",
                       },
@@ -97,6 +105,7 @@ export function EvenementModal({
                 { id: evenement.id, data },
                 {
                     onSuccess: () => {
+                        resetUpdateMutation();
                         reset();
                         onOpenChange(false);
                     },
@@ -105,6 +114,7 @@ export function EvenementModal({
         } else {
             createMutate(data, {
                 onSuccess: () => {
+                    resetCreateMutation();
                     reset();
                     onOpenChange(false);
                 },
@@ -125,50 +135,34 @@ export function EvenementModal({
                     onSubmit={handleSubmit(onSubmit)}
                     className="space-y-4 py-2"
                 >
-                    {/* Nom */}
+                    {/* Ville */}
                     <div className="space-y-1.5">
-                        <Label htmlFor="nom">Nom de l&apos;événement</Label>
+                        <Label htmlFor="ville">Ville</Label>
                         <Input
-                            id="nom"
-                            placeholder="Ex : Repair Café de printemps"
-                            {...register("nom")}
+                            id="ville"
+                            placeholder="Ex : Lyon"
+                            {...register("ville")}
                         />
-                        {errors.nom && (
+                        {errors.ville && (
                             <p className="text-xs text-destructive">
-                                {errors.nom.message}
+                                {errors.ville.message}
                             </p>
                         )}
                     </div>
 
-                    {/* Ville + Lieu */}
-                    <div className="grid grid-cols-2 gap-3">
-                        <div className="space-y-1.5">
-                            <Label htmlFor="ville">Ville</Label>
-                            <Input
-                                id="ville"
-                                placeholder="Ex : Lyon"
-                                {...register("ville")}
-                            />
-                            {errors.ville && (
-                                <p className="text-xs text-destructive">
-                                    {errors.ville.message}
-                                </p>
-                            )}
-                        </div>
-
-                        <div className="space-y-1.5">
-                            <Label htmlFor="lieu">Lieu</Label>
-                            <Input
-                                id="lieu"
-                                placeholder="Ex : MJC Confluence"
-                                {...register("lieu")}
-                            />
-                            {errors.lieu && (
-                                <p className="text-xs text-destructive">
-                                    {errors.lieu.message}
-                                </p>
-                            )}
-                        </div>
+                    {/* Code postal */}
+                    <div className="space-y-1.5">
+                        <Label htmlFor="zip_code">Code postal</Label>
+                        <Input
+                            id="zip_code"
+                            placeholder="Ex : 37000"
+                            {...register("zip_code")}
+                        />
+                        {errors.zip_code && (
+                            <p className="text-xs text-destructive">
+                                {errors.zip_code.message}
+                            </p>
+                        )}
                     </div>
 
                     {/* Adresse */}
@@ -176,7 +170,7 @@ export function EvenementModal({
                         <Label htmlFor="adresse">Adresse complète</Label>
                         <Input
                             id="adresse"
-                            placeholder="Ex : 12 rue de la République, 69001 Lyon"
+                            placeholder="Ex : 12 rue de la République"
                             {...register("adresse")}
                         />
                         {errors.adresse && (
@@ -200,6 +194,12 @@ export function EvenementModal({
                             </p>
                         )}
                     </div>
+
+                    {(createError || updateError) && (
+                        <p className="text-xs text-destructive rounded-md bg-destructive/10 px-3 py-2">
+                            {(createError ?? updateError)?.message}
+                        </p>
+                    )}
 
                     <DialogFooter className="pt-2">
                         <Button

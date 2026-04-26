@@ -41,6 +41,13 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         );
     }
 
+    // Required fields
+    if (!body.objetId || !body.evenementId) {
+        return NextResponse.json(
+            { error: "objetId et evenementId sont requis" },
+            { status: 400 },
+        );
+    }
     // Validate objet belongs to the visiteur
     const objet = visiteur.objets.find((o) => o.id === body.objetId);
     if (!objet) {

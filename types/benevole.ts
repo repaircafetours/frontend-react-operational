@@ -56,6 +56,7 @@ export const REGIMES_ALIMENTAIRES: RegimeAlimentaire[] = [
 
 export interface Benevole {
     id: number;
+    idHumHub?: number;
     nom: string;
     prenom: string;
     photo?: string;
@@ -79,4 +80,9 @@ export interface BenevoleFormData {
     secteurs: SecteurReparation[];
     regimeAlimentaire: RegimeAlimentaire;
     actif: boolean;
+}
+
+export interface BenevoleCreateData {
+    idHumHub: number;
+    password: string;
 }

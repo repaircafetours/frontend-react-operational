@@ -37,16 +37,18 @@ export function RdvModal({ open, onOpenChange, evenementId }: RdvModalProps) {
     const { data: evenements = [] } = useEvenements();
     const { data: visiteurs = [] } = useVisiteurs();
 
-    const [selectedEvenementId, setSelectedEvenementId] = useState<number>(
+    const [selectedEvenementId, setSelectedEvenementId] = useState(
         evenementId ?? 0,
     );
-    const [selectedVisiteurId, setSelectedVisiteurId] = useState<number>(0);
-    const [selectedObjetId, setSelectedObjetId] = useState<number>(0);
+    const [selectedVisiteurId, setSelectedVisiteurId] = useState(0);
+    const [selectedObjetId, setSelectedObjetId] = useState(0);
+    const [selectedDate, setSelectedDate] = useState("");
 
     const [errors, setErrors] = useState<{
         evenementId?: string;
         visiteurId?: string;
         objetId?: string;
+        date?: string;
     }>({});
 
     // Reset state whenever the modal opens
@@ -55,6 +57,7 @@ export function RdvModal({ open, onOpenChange, evenementId }: RdvModalProps) {
             setSelectedEvenementId(evenementId ?? 0);
             setSelectedVisiteurId(0);
             setSelectedObjetId(0);
+            setSelectedDate("");
             setErrors({});
         }
     }, [open, evenementId]);
@@ -83,6 +86,9 @@ export function RdvModal({ open, onOpenChange, evenementId }: RdvModalProps) {
         if (!selectedObjetId) {
             newErrors.objetId = "L'objet est requis";
         }
+        if (!selectedDate) {
+            newErrors.date = "La date est requise";
+        }
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -97,15 +103,16 @@ export function RdvModal({ open, onOpenChange, evenementId }: RdvModalProps) {
 
         mutate(
             {
-                visiteurId: selectedVisiteurId,
-                objetId: selectedObjetId,
                 evenementId: selectedEvenementId,
+                objetId: selectedObjetId,
+                date: selectedDate,
             },
             {
                 onSuccess: () => {
                     setSelectedEvenementId(evenementId ?? 0);
                     setSelectedVisiteurId(0);
                     setSelectedObjetId(0);
+                    setSelectedDate("");
                     setErrors({});
                     onOpenChange(false);
                 },
@@ -161,7 +168,7 @@ export function RdvModal({ open, onOpenChange, evenementId }: RdvModalProps) {
                         )}
                     </div>
 
-                    {/* ── Visiteur ── */}
+                    {/* ── Visiteur (UI uniquement — non transmis au backend) ── */}
                     <div className="space-y-1.5">
                         <Label>Visiteur</Label>
                         <Select
@@ -240,6 +247,28 @@ export function RdvModal({ open, onOpenChange, evenementId }: RdvModalProps) {
                         {errors.objetId && (
                             <p className="text-xs text-destructive">
                                 {errors.objetId}
+                            </p>
+                        )}
+                    </div>
+
+                    {/* ── Date et heure du rendez-vous ── */}
+                    <div className="space-y-1.5">
+                        <Label>Date et heure du rendez-vous</Label>
+                        <input
+                            type="datetime-local"
+                            value={selectedDate}
+                            onChange={(e) => {
+                                setSelectedDate(e.target.value);
+                                setErrors((prev) => ({
+                                    ...prev,
+                                    date: undefined,
+                                }));
+                            }}
+                            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                        />
+                        {errors.date && (
+                            <p className="text-xs text-destructive">
+                                {errors.date}
                             </p>
                         )}
                     </div>

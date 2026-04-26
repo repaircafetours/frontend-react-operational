@@ -2,96 +2,78 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ShieldCheck, Users, ChefHat } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { Loader2, LogIn } from "lucide-react";
 import { useAuthStore } from "@/store/auth";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import type { Role, UserSession } from "@/types/user";
-
-// ── Mock profiles ─────────────────────────────────────────────────────────────
-
-const PROFILES: Record<Role, UserSession> = {
-    admin: {
-        id: 1,
-        nom: "Martin",
-        prenom: "Sophie",
-        email: "sophie@repaircafe.fr",
-        role: "admin",
-    },
-    benevole: {
-        id: 2,
-        nom: "Dupont",
-        prenom: "Luc",
-        email: "luc@repaircafe.fr",
-        role: "benevole",
-    },
-    benevole_intendant: {
-        id: 5,
-        nom: "Leroy",
-        prenom: "Camille",
-        email: "camille@repaircafe.fr",
-        role: "benevole_intendant",
-    },
-};
-
-// ── Profile display config ────────────────────────────────────────────────────
-
-interface ProfileConfig {
-    label: string;
-    description: string;
-    icon: LucideIcon;
-    iconBg: string;
-    iconColor: string;
-}
-
-const PROFILE_CONFIG: Record<Role, ProfileConfig> = {
-    admin: {
-        label: "Administrateur",
-        description: "Accès complet lecture/écriture",
-        icon: ShieldCheck,
-        iconBg: "bg-violet-100",
-        iconColor: "text-violet-700",
-    },
-    benevole: {
-        label: "Bénévole",
-        description: "Accès en lecture",
-        icon: Users,
-        iconBg: "bg-sky-100",
-        iconColor: "text-sky-700",
-    },
-    benevole_intendant: {
-        label: "Intendant",
-        description: "Régime alimentaire uniquement",
-        icon: ChefHat,
-        iconBg: "bg-orange-100",
-        iconColor: "text-orange-700",
-    },
-};
-
-const ROLE_ORDER: Role[] = ["admin", "benevole", "benevole_intendant"];
+import { apiFetch } from "@/lib/api";
+import type { UserSession } from "@/types/user";
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function LoginPage() {
-    const { login } = useAuthStore();
     const router = useRouter();
-    const [selectedRole, setSelectedRole] = useState<Role | null>(null);
 
-    const handleLogin = () => {
-        if (!selectedRole) return;
-        login(PROFILES[selectedRole]);
-        if (selectedRole === "benevole_intendant") {
-            router.push("/intendance");
-        } else {
-            router.push("/dashboard");
+    const [loginValue, setLoginValue] = useState("");
+    const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setError(null);
+        setLoading(true);
+
+        try {
+            const res = await apiFetch(
+                "http://localhost:8000/api/v1/auth/login",
+                {
+                    method: "POST",
+                    body: JSON.stringify({ login: loginValue, password }),
+                },
+            );
+
+            if (!res.ok) {
+                const body = await res.json().catch(() => ({}));
+                setError(
+                    (body as { detail?: string }).detail ??
+                        "Identifiants incorrects. Veuillez réessayer.",
+                );
+                return;
+            }
+
+            const data = (await res.json()) as {
+                token: string;
+                user?: Partial<UserSession>;
+            };
+
+            const userSession: UserSession = {
+                id: data.user?.id ?? 1,
+                nom: data.user?.nom ?? loginValue,
+                prenom: data.user?.prenom ?? "",
+                email: data.user?.email ?? "",
+                role: data.user?.role ?? "admin",
+            };
+
+            useAuthStore.getState().login(userSession, data.token);
+
+            if (userSession.role === "benevole_intendant") {
+                router.push("/intendance");
+            } else {
+                router.push("/dashboard");
+            }
+        } catch {
+            setError(
+                "Impossible de contacter le serveur. Vérifiez votre connexion.",
+            );
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
         <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-violet-50 via-white to-sky-50 p-4">
-            <div className="w-full max-w-2xl space-y-10">
+            <div className="w-full max-w-sm space-y-8">
                 {/* Logo */}
                 <div className="text-center space-y-3">
                     <h1 className="text-5xl font-black tracking-tight">
@@ -101,77 +83,97 @@ export default function LoginPage() {
                         </span>
                     </h1>
                     <p className="text-sm text-muted-foreground">
-                        Système de gestion du Repair Café — sélectionnez votre
-                        profil pour continuer
+                        Système de gestion du Repair Café — connectez-vous pour
+                        continuer
                     </p>
                 </div>
 
-                {/* Separator */}
-                <div className="flex items-center gap-4">
-                    <div className="flex-1 h-px bg-border" />
-                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
-                        Choisissez votre profil
-                    </p>
-                    <div className="flex-1 h-px bg-border" />
-                </div>
+                {/* Login card */}
+                <Card className="border shadow-md">
+                    <CardHeader className="pb-2">
+                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest text-center">
+                            Connexion
+                        </p>
+                    </CardHeader>
 
-                {/* Profile cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    {ROLE_ORDER.map((role) => {
-                        const config = PROFILE_CONFIG[role];
-                        const Icon = config.icon;
-                        const isSelected = selectedRole === role;
+                    <CardContent className="pt-2">
+                        <form onSubmit={handleSubmit} className="space-y-5">
+                            {/* Login field */}
+                            <div className="space-y-1.5">
+                                <label
+                                    htmlFor="login"
+                                    className="text-sm font-medium text-foreground"
+                                >
+                                    Identifiant
+                                </label>
+                                <input
+                                    id="login"
+                                    type="text"
+                                    autoComplete="username"
+                                    required
+                                    value={loginValue}
+                                    onChange={(e) =>
+                                        setLoginValue(e.target.value)
+                                    }
+                                    placeholder="Votre identifiant"
+                                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 transition"
+                                />
+                            </div>
 
-                        return (
-                            <Card
-                                key={role}
-                                onClick={() => setSelectedRole(role)}
-                                className={cn(
-                                    "cursor-pointer border-2 transition-all duration-150",
-                                    isSelected
-                                        ? "border-primary bg-primary/5 shadow-md"
-                                        : "border-border hover:shadow-lg hover:-translate-y-0.5",
-                                )}
+                            {/* Password field */}
+                            <div className="space-y-1.5">
+                                <label
+                                    htmlFor="password"
+                                    className="text-sm font-medium text-foreground"
+                                >
+                                    Mot de passe
+                                </label>
+                                <input
+                                    id="password"
+                                    type="password"
+                                    autoComplete="current-password"
+                                    required
+                                    value={password}
+                                    onChange={(e) =>
+                                        setPassword(e.target.value)
+                                    }
+                                    placeholder="••••••••"
+                                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 transition"
+                                />
+                            </div>
+
+                            {/* Error message */}
+                            {error && (
+                                <p
+                                    role="alert"
+                                    className="rounded-md bg-destructive/10 border border-destructive/20 px-3 py-2 text-xs text-destructive"
+                                >
+                                    {error}
+                                </p>
+                            )}
+
+                            {/* Submit button */}
+                            <Button
+                                type="submit"
+                                size="lg"
+                                className="w-full"
+                                disabled={loading}
                             >
-                                <CardContent className="p-7 flex flex-col items-center text-center gap-4">
-                                    <div
-                                        className={cn(
-                                            "w-14 h-14 rounded-2xl flex items-center justify-center",
-                                            config.iconBg,
-                                        )}
-                                    >
-                                        <Icon
-                                            className={cn(
-                                                "h-7 w-7",
-                                                config.iconColor,
-                                            )}
-                                        />
-                                    </div>
-                                    <div>
-                                        <p className="font-bold text-base">
-                                            {config.label}
-                                        </p>
-                                        <p className="text-xs text-muted-foreground mt-1">
-                                            {config.description}
-                                        </p>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        );
-                    })}
-                </div>
-
-                {/* Connexion button */}
-                <div className="flex justify-center">
-                    <Button
-                        size="lg"
-                        className="px-12"
-                        disabled={!selectedRole}
-                        onClick={handleLogin}
-                    >
-                        Connexion
-                    </Button>
-                </div>
+                                {loading ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Connexion en cours…
+                                    </>
+                                ) : (
+                                    <>
+                                        <LogIn className="mr-2 h-4 w-4" />
+                                        Se connecter
+                                    </>
+                                )}
+                            </Button>
+                        </form>
+                    </CardContent>
+                </Card>
             </div>
         </main>
     );
