@@ -21,6 +21,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useCreateVisiteur, useUpdateVisiteur } from "@/hooks/useVisiteurs";
 import type { Visiteur } from "@/types/visiteur";
 import {
@@ -47,6 +48,9 @@ const schema = z.object({
         "Presse",
         "Autre",
     ] as const),
+    zip_code: z.string().optional(),
+    city: z.string().optional(),
+    notification: z.boolean().optional(),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -71,6 +75,7 @@ export function VisiteurModal({
     const createMutation = useCreateVisiteur();
     const updateMutation = useUpdateVisiteur();
     const isPending = createMutation.isPending || updateMutation.isPending;
+    const mutationError = createMutation.error ?? updateMutation.error;
 
     const {
         register,
@@ -87,11 +92,16 @@ export function VisiteurModal({
             email: "",
             telephone: "",
             connu: "Bouche à oreille",
+            zip_code: "",
+            city: "",
+            notification: false,
         },
     });
 
     useEffect(() => {
         if (open) {
+            createMutation.reset();
+            updateMutation.reset();
             reset(
                 visiteur
                     ? {
@@ -101,6 +111,9 @@ export function VisiteurModal({
                           email: visiteur.email,
                           telephone: visiteur.telephone,
                           connu: visiteur.connu,
+                          zip_code: visiteur?.zip_code ?? "",
+                          city: visiteur?.city ?? "",
+                          notification: visiteur?.notification ?? false,
                       }
                     : {
                           civilite: "M.",
@@ -109,6 +122,9 @@ export function VisiteurModal({
                           email: "",
                           telephone: "",
                           connu: "Bouche à oreille",
+                          zip_code: "",
+                          city: "",
+                          notification: false,
                       },
             );
         }
@@ -121,6 +137,7 @@ export function VisiteurModal({
                 { id: visiteur.id, data },
                 {
                     onSuccess: () => {
+                        updateMutation.reset();
                         reset();
                         onOpenChange(false);
                     },
@@ -129,6 +146,7 @@ export function VisiteurModal({
         } else {
             createMutation.mutate(data, {
                 onSuccess: () => {
+                    createMutation.reset();
                     reset();
                     onOpenChange(false);
                 },
@@ -245,6 +263,59 @@ export function VisiteurModal({
                         )}
                     </div>
 
+                    {/* Code postal + Ville */}
+                    <div className="grid grid-cols-2 gap-3">
+                        <div className="space-y-1.5">
+                            <Label htmlFor="zip_code">
+                                Code postal{" "}
+                                <span className="text-muted-foreground font-normal">
+                                    (optionnel)
+                                </span>
+                            </Label>
+                            <Input
+                                id="zip_code"
+                                placeholder="37000"
+                                {...register("zip_code")}
+                            />
+                        </div>
+                        <div className="space-y-1.5">
+                            <Label htmlFor="city">
+                                Ville{" "}
+                                <span className="text-muted-foreground font-normal">
+                                    (optionnel)
+                                </span>
+                            </Label>
+                            <Input
+                                id="city"
+                                placeholder="Tours"
+                                {...register("city")}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Notification */}
+                    <div className="flex items-center gap-2">
+                        <Controller
+                            name="notification"
+                            control={control}
+                            render={({ field }) => (
+                                <Checkbox
+                                    id="notification"
+                                    checked={field.value ?? false}
+                                    onCheckedChange={(v) =>
+                                        field.onChange(v === true)
+                                    }
+                                />
+                            )}
+                        />
+                        <Label
+                            htmlFor="notification"
+                            className="font-normal cursor-pointer"
+                        >
+                            Accepte les notifications
+                        </Label>
+                    </div>
+
                     {/* Source de connaissance */}
                     <div className="space-y-1.5">
                         <Label>
@@ -279,6 +350,12 @@ export function VisiteurModal({
                             </p>
                         )}
                     </div>
+
+                    {mutationError && (
+                        <p className="text-xs text-destructive rounded-md bg-destructive/10 px-3 py-2">
+                            {mutationError.message}
+                        </p>
+                    )}
 
                     <DialogFooter className="pt-2">
                         <Button

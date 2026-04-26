@@ -35,6 +35,9 @@ export interface Visiteur {
     objets: ObjetAReparer[];
     /** How the visitor heard about the association */
     connu: SourceConnaissance;
+    zip_code?: string;
+    city?: string;
+    notification?: boolean;
     createdAt: string;
 }
 
@@ -45,6 +48,9 @@ export interface VisiteurFormData {
     email: string;
     telephone: string;
     connu: SourceConnaissance;
+    zip_code?: string;
+    city?: string;
+    notification?: boolean;
 }
 
 export interface VisiteurUpdateData {
@@ -54,4 +60,7 @@ export interface VisiteurUpdateData {
     email?: string;
     telephone?: string;
     connu?: SourceConnaissance;
+    zip_code?: string;
+    city?: string;
+    notification?: boolean;
 }

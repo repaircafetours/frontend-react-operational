@@ -44,6 +44,11 @@ const schema = z.object({
                 .positive("Le poids doit être un nombre positif")
                 .optional(),
         ),
+    age: z
+        .number()
+        .optional()
+        .transform((v) => (v !== undefined && isNaN(v) ? undefined : v))
+        .pipe(z.number().int("L'âge doit être un entier").min(0).optional()),
     note: z.string(),
 });
 
@@ -82,6 +87,7 @@ export function ObjetModal({
             risqueElectrique: false,
             demonte: false,
             poids: undefined,
+            age: undefined,
             note: "",
         },
     });
@@ -96,6 +102,7 @@ export function ObjetModal({
                 risqueElectrique: false,
                 demonte: false,
                 poids: undefined,
+                age: undefined,
                 note: "",
             });
         }
@@ -110,6 +117,7 @@ export function ObjetModal({
             risqueElectrique: data.risqueElectrique,
             demonte: data.demonte,
             poids: data.poids,
+            age: data.age,
             note: data.note,
         };
 
@@ -253,8 +261,8 @@ export function ObjetModal({
                         />
                     </div>
 
-                    {/* Poids + Note (2 colonnes) */}
-                    <div className="grid grid-cols-2 gap-3">
+                    {/* Poids + Âge + Note (3 colonnes) */}
+                    <div className="grid grid-cols-3 gap-3">
                         <div className="space-y-1.5">
                             <Label htmlFor="poids">
                                 Poids (kg){" "}
@@ -273,6 +281,28 @@ export function ObjetModal({
                             {errors.poids && (
                                 <p className="text-xs text-destructive">
                                     {errors.poids.message}
+                                </p>
+                            )}
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <Label htmlFor="age">
+                                Âge (ans){" "}
+                                <span className="text-muted-foreground font-normal">
+                                    (optionnel)
+                                </span>
+                            </Label>
+                            <Input
+                                id="age"
+                                type="number"
+                                step="1"
+                                min="0"
+                                placeholder="5"
+                                {...register("age", { valueAsNumber: true })}
+                            />
+                            {errors.age && (
+                                <p className="text-xs text-destructive">
+                                    {errors.age.message}
                                 </p>
                             )}
                         </div>
