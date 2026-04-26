@@ -56,8 +56,11 @@ export default function EvenementDetailPage() {
 
     const id = Number(eventId);
 
-    const { data: evenement, isLoading: loadingEvent, isError: errorEvent } =
-        useEvenement(id);
+    const {
+        data: evenement,
+        isLoading: loadingEvent,
+        isError: errorEvent,
+    } = useEvenement(id);
     const { data: rdvs = [], isLoading: loadingRdvs } = useRdvs({
         evenementId: id,
     });
@@ -105,9 +108,12 @@ export default function EvenementDetailPage() {
 
     const handleConfirmDeleteRdv = () => {
         if (!rdvToDelete) return;
-        deleteRdv(rdvToDelete.id, {
-            onSuccess: () => setRdvToDelete(null),
-        });
+        deleteRdv(
+            { id: rdvToDelete.id, evenementId: id },
+            {
+                onSuccess: () => setRdvToDelete(null),
+            },
+        );
     };
 
     return (
@@ -176,7 +182,9 @@ export default function EvenementDetailPage() {
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <MapPin className="h-4 w-4 shrink-0" />
                             <span>
-                                {evenement.lieu} — {evenement.ville}
+                                {evenement.lieu
+                                    ? `${evenement.lieu} — ${evenement.ville}`
+                                    : evenement.ville}
                             </span>
                         </div>
                         <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -218,7 +226,8 @@ export default function EvenementDetailPage() {
                         <p className="text-sm font-medium">Aucun rendez-vous</p>
                         {admin && (
                             <p className="text-xs mt-1">
-                                Cliquez sur &laquo;&nbsp;Ajouter un RDV&nbsp;&raquo; pour commencer.
+                                Cliquez sur &laquo;&nbsp;Ajouter un
+                                RDV&nbsp;&raquo; pour commencer.
                             </p>
                         )}
                     </div>
@@ -282,7 +291,9 @@ export default function EvenementDetailPage() {
                                                             </span>
                                                             {objet.marque && (
                                                                 <span className="text-muted-foreground">
-                                                                    {objet.marque}
+                                                                    {
+                                                                        objet.marque
+                                                                    }
                                                                 </span>
                                                             )}
                                                         </div>
@@ -290,7 +301,9 @@ export default function EvenementDetailPage() {
                                                             <span
                                                                 className={`${statutInfo.color} text-xs font-medium px-2 py-0.5 rounded-full`}
                                                             >
-                                                                {statutInfo.label}
+                                                                {
+                                                                    statutInfo.label
+                                                                }
                                                             </span>
                                                         )}
                                                     </div>
@@ -366,9 +379,12 @@ export default function EvenementDetailPage() {
                 name={
                     rdvToDelete
                         ? (() => {
-                              const v = visiteurs.find(
-                                  (vv) => vv.id === rdvToDelete.visiteurId,
-                              );
+                              const v = rdvToDelete.visiteurId
+                                  ? visiteurs.find(
+                                        (vv) =>
+                                            vv.id === rdvToDelete.visiteurId,
+                                    )
+                                  : undefined;
                               const o = v?.objets.find(
                                   (oo) => oo.id === rdvToDelete.objetId,
                               );

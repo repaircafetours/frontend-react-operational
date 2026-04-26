@@ -7,26 +7,29 @@ let nextId = 10;
 
 /** GET /api/evenements — liste tous les événements */
 export async function GET(): Promise<NextResponse> {
-  return NextResponse.json(db.evenements);
+    await new Promise((r) => setTimeout(r, 80));
+    return NextResponse.json(db.evenements);
 }
 
 /** POST /api/evenements — crée un événement */
 export async function POST(req: NextRequest): Promise<NextResponse> {
-  const body: EvenementFormData = await req.json();
+    const body: EvenementFormData = await req.json();
 
-  if (!body.nom || !body.ville || !body.lieu || !body.date || !body.adresse) {
-    return NextResponse.json(
-      { error: "Champs requis manquants" },
-      { status: 400 },
-    );
-  }
+    if (!body.ville || !body.adresse || !body.date) {
+        return NextResponse.json(
+            { error: "Champs requis manquants" },
+            { status: 400 },
+        );
+    }
 
-  const evenement = {
-    ...body,
-    id: ++nextId,
-    createdAt: new Date().toISOString(),
-  };
+    const evenement = {
+        ...body,
+        id: ++nextId,
+        nom: body.ville, // dérivé de la ville
+        lieu: "", // vide, pas dans le backend
+        createdAt: new Date().toISOString(),
+    };
 
-  db.evenements.push(evenement);
-  return NextResponse.json(evenement, { status: 201 });
+    db.evenements.push(evenement);
+    return NextResponse.json(evenement, { status: 201 });
 }

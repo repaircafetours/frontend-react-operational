@@ -7,21 +7,20 @@ export interface Evenement {
     lieu: string;
     date: string; // ISO 8601 date string
     adresse: string;
+    zip_code?: string;
     createdAt: string;
 }
 
 export interface EvenementFormData {
-    nom: string;
     ville: string;
-    lieu: string;
-    date: string;
     adresse: string;
+    date: string;
+    zip_code: string;
 }
 
 export interface EvenementUpdateData {
-    nom?: string;
     ville?: string;
-    lieu?: string;
-    date?: string;
     adresse?: string;
+    date?: string;
+    zip_code?: string;
 }
