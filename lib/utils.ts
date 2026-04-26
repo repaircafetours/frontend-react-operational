@@ -16,8 +16,13 @@ export function initials(name: string): string {
 }
 
 /** Returns up to 2 uppercase initials from separate first/last name */
-export function initialsFromParts(prenom: string, nom: string): string {
-    return `${prenom[0] ?? ""}${nom[0] ?? ""}`.toUpperCase();
+export function initialsFromParts(
+    prenom?: string | null,
+    nom?: string | null,
+): string {
+    const a = prenom?.[0] ?? "";
+    const b = nom?.[0] ?? "";
+    return (a + b).toUpperCase() || "?";
 }
 
 /** Formats a date string to French locale (e.g. "15 mars 2024") */
