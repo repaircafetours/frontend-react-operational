@@ -2,14 +2,16 @@
 
 export interface Rdv {
     id: number;
-    visiteurId: number;
-    objetId: number;
-    evenementId: number;
-    createdAt: string;
+    visiteurId?: number; // optionnel — le backend ne le renvoie pas directement
+    objetId: number; // backend: item_id
+    evenementId: number; // backend: event_id
+    date?: string; // date du rendez-vous
+    comment?: string; // commentaire bénévole
+    createdAt?: string;
 }
 
 export interface RdvFormData {
-    visiteurId: number;
-    objetId: number;
     evenementId: number;
+    objetId: number; // sera mis dans l'URL backend
+    date: string; // date du rendez-vous (ISO)
 }

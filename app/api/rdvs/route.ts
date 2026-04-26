@@ -24,6 +24,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const body: RdvFormData = await req.json();
 
+<<<<<<< Updated upstream
   // Required fields
   if (!body.visiteurId || !body.objetId || !body.evenementId) {
     return NextResponse.json(
@@ -49,6 +50,15 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       { status: 400 },
     );
   }
+=======
+    // Required fields
+    if (!body.objetId || !body.evenementId) {
+        return NextResponse.json(
+            { error: "objetId et evenementId sont requis" },
+            { status: 400 },
+        );
+    }
+>>>>>>> Stashed changes
 
   // Validate evenement exists
   const evenement = db.evenements.find((e) => e.id === body.evenementId);
