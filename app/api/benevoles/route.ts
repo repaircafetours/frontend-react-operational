@@ -6,24 +6,24 @@ import type { BenevoleFormData } from "@/types/benevole";
 let nextId = 10;
 
 export async function GET(): Promise<NextResponse> {
-  return NextResponse.json(db.benevoles);
+    return NextResponse.json(db.benevoles);
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-  const body: BenevoleFormData = await req.json();
+    const body: BenevoleFormData = await req.json();
 
-  if (!body.nom || !body.prenom || !body.role || !body.categorie) {
-    return NextResponse.json(
-      { error: "Champs requis manquants (nom, prenom, role, categorie)" },
-      { status: 400 },
-    );
-  }
+    if (!body.nom || !body.prenom || !body.role || !body.categorie) {
+        return NextResponse.json(
+            { error: "Champs requis manquants (nom, prenom, role, categorie)" },
+            { status: 400 },
+        );
+    }
 
-  const benevole = {
-    ...body,
-    id: ++nextId,
-    createdAt: new Date().toISOString(),
-  };
-  db.benevoles.push(benevole);
-  return NextResponse.json(benevole, { status: 201 });
+    const benevole = {
+        ...body,
+        id: ++nextId,
+        createdAt: new Date().toISOString(),
+    };
+    db.benevoles.push(benevole);
+    return NextResponse.json(benevole, { status: 201 });
 }
